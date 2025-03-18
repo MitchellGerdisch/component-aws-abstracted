@@ -1,10 +1,10 @@
 from pulumi import ComponentResource, ResourceOptions
 from pulumi_aws import ec2, get_availability_zones
 
-# VPC
+# Network abstraction for AWS VPC, IGW, Route Table and Subnets
 
 
-class VpcArgs:
+class NetworkArgs:
 
     def __init__(self,
                  cidr_block='10.100.0.0/16',
@@ -18,14 +18,14 @@ class VpcArgs:
         self.enable_dns_support = enable_dns_support
 
 
-class Vpc(ComponentResource):
+class Network(ComponentResource):
 
     def __init__(self,
                  name: str,
-                 args: VpcArgs,
+                 args: NetworkArgs,
                  opts: ResourceOptions = None):
 
-        super().__init__('aws-abstracted:resource:VPC', name, {}, opts)
+        super().__init__('aws-abstracted:resource:network', name, {}, opts)
 
         vpc_name = name+'-vpc'
         self.vpc = ec2.Vpc(vpc_name,
@@ -88,72 +88,5 @@ class Vpc(ComponentResource):
             )
             self.subnets.append(vpc_subnet)
             self.subnet_ids.append(vpc_subnet.id)
-
-        # Security Groups
-        rds_sg_name = f'{name}-rds-sg'
-        self.rds_security_group = ec2.SecurityGroup(rds_sg_name,
-            vpc_id=self.vpc.id,
-            description='Allow client access.',
-            tags={
-                'Name': rds_sg_name
-            },
-            ingress=[
-                ec2.SecurityGroupIngressArgs(
-                    cidr_blocks=[
-                        '0.0.0.0/0'],
-                    from_port=3306,
-                    to_port=3306,
-                    protocol='tcp',
-                    description='Allow rds access.'
-                ),
-            ],
-            egress=[
-                ec2.SecurityGroupEgressArgs(
-                    protocol='-1',
-                    from_port=0,
-                    to_port=0,
-                    cidr_blocks=[
-                        '0.0.0.0/0'],
-                )],
-            opts=ResourceOptions(
-                parent=self)
-            )
-
-        fe_sg_name = f'{name}-fe-sg'
-        self.fe_security_group = ec2.SecurityGroup(fe_sg_name,
-            vpc_id=self.vpc.id,
-            description='Allow all HTTP(s) traffic.',
-            tags={
-                'Name': fe_sg_name
-            },
-            ingress=[
-                ec2.SecurityGroupIngressArgs(
-                    cidr_blocks=[
-                        '0.0.0.0/0'],
-                    from_port=443,
-                    to_port=443,
-                    protocol='tcp',
-                    description='Allow https.'
-                ),
-                ec2.SecurityGroupIngressArgs(
-                    cidr_blocks=[
-                        '0.0.0.0/0'],
-                    from_port=80,
-                    to_port=80,
-                    protocol='tcp',
-                    description='Allow http access'
-                ),
-            ],
-            egress=[
-                ec2.SecurityGroupEgressArgs(
-                    protocol='-1',
-                    from_port=0,
-                    to_port=0,
-                    cidr_blocks=[
-                        '0.0.0.0/0'],
-                )],
-            opts=ResourceOptions(
-                parent=self)
-            )
 
         self.register_outputs({})
