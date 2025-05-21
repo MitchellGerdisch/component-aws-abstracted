@@ -6,6 +6,7 @@
         "typescript": "^5.0.0"
     },
     "dependencies": {
+        "@mitchellgerdisch/aws-abstracted": "file:sdks/mitchellgerdisch-aws-abstracted",
         "@pulumi/pulumi": "^3.113.0"
     }
 }

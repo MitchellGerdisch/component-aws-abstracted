@@ -1,22 +1,15 @@
-from pulumi import ComponentResource, ResourceOptions
+from pulumi import ComponentResource, ResourceOptions, Input
+from typing import Optional, Sequence, TypedDict
 from pulumi_aws import ec2, get_availability_zones
 
 # Network abstraction for AWS VPC, IGW, Route Table and Subnets
 
 
-class NetworkArgs:
-
-    def __init__(self,
-                 cidr_block='10.100.0.0/16',
-                 instance_tenancy='default',
-                 enable_dns_hostnames=True,
-                 enable_dns_support=True,
-                 ):
-        self.cidr_block = cidr_block
-        self.instance_tenancy = instance_tenancy
-        self.enable_dns_hostnames = enable_dns_hostnames
-        self.enable_dns_support = enable_dns_support
-
+class NetworkArgs(TypedDict):
+    cidr_block: Optional[Input[str]]
+    instance_tenancy: Optional[Input[str]]
+    enable_dns_hostnames: Optional[Input[bool]]
+    enable_dns_support: Optional[Input[bool]]
 
 class Network(ComponentResource):
 
@@ -28,11 +21,16 @@ class Network(ComponentResource):
         super().__init__('aws-abstracted:resource:network', name, {}, opts)
 
         vpc_name = name+'-vpc'
+        cidr_block = args.get('cidr_block', '10.100.0.0/16')
+        instance_tenancy = args.get('instance_tenancy', 'default')
+        enable_dns_hostnames = args.get('enable_dns_hostnames', True)
+        enable_dns_support = args.get('enable_dns_support', True)
+
         self.vpc = ec2.Vpc(vpc_name,
-            cidr_block=args.cidr_block,
-            instance_tenancy=args.instance_tenancy,
-            enable_dns_hostnames=args.enable_dns_hostnames,
-            enable_dns_support=args.enable_dns_support,
+            cidr_block=cidr_block,
+            instance_tenancy=instance_tenancy,
+            enable_dns_hostnames=enable_dns_hostnames,
+            enable_dns_support=enable_dns_support,
             tags={
                 'Name': vpc_name
             },
