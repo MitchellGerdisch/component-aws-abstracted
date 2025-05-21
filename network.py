@@ -88,6 +88,8 @@ class Network(ComponentResource):
             self.subnets.append(vpc_subnet)
             self.subnet_ids.append(vpc_subnet.id)
 
-        self.random_pet = RandomPet(name)
+        self.random_pet = RandomPet(name,
+                                    opts=ResourceOptions(parent=self)
+                                    )
 
         self.register_outputs({})
