@@ -1,6 +1,7 @@
 from pulumi import ComponentResource, ResourceOptions, Input
 from typing import Optional, Sequence, TypedDict
 from pulumi_aws import ec2, get_availability_zones
+from randomthing import RandomPet
 
 # Network abstraction for AWS VPC, IGW, Route Table and Subnets
 
@@ -86,5 +87,7 @@ class Network(ComponentResource):
             )
             self.subnets.append(vpc_subnet)
             self.subnet_ids.append(vpc_subnet.id)
+
+        self.random_pet = RandomPet(name)
 
         self.register_outputs({})

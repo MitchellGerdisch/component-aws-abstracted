@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "@mitchellgerdisch/aws-abstracted": "file:sdks/mitchellgerdisch-aws-abstracted",
-        "@pulumi/pulumi": "^3.113.0"
+        "@pulumi/pulumi": "^3.113.0",
+        "@pulumi/random": "^4.18.2"
     }
 }
