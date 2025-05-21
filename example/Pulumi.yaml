@@ -1,0 +1,12 @@
+name: aws-abstracted-example
+description: Test aws-abstracted component
+packages:
+  aws-abstracted: https://github.com/mitchellgerdisch/component-aws-abstracted
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: typescript

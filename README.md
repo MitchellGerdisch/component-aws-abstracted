@@ -1,2 +1,2 @@
-# component-aws-vpc
-Component in Python to set up an AWS VPC
+# component-aws-abstracted
+Component in Python to abstract some AWS use-cases
